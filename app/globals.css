@@ -81,3 +81,38 @@ body,
   }
 }
 
+.ql-container {
+  font-size: 16px !important;
+}
+
+.audio-slider > span:first-child > span {
+  background-color: #fff5 !important;
+}
+
+.audio-slider > span:nth-child(2) > span {
+  width: .5rem !important;
+  height: .5rem !important;
+}
+
+.time-slider > span:first-child > span {
+  background-color: rgba(61, 90, 255, 0.333) !important;
+  transition: all 0.1s linear !important;
+}
+
+.time-slider > span:nth-child(2) > span {
+  width: .1rem !important;
+  height: .5rem !important;
+  transition: all 0.1s linear !important;
+}
+
+.playbar {
+  opacity: 0 !important;
+  transition: all 0.3s ease-in-out !important;
+}
+.playbar-hovered {
+  opacity: 1 !important;
+}
+
+.force-show {
+  opacity: 1!important
+}

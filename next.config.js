@@ -1,11 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        domains: ["lh3.googleusercontent.com", "utfs.io"]
-    },
-    experimental: {
-        serverActions: true
-    }
-}
+  images: {
+    domains: ["lh3.googleusercontent.com", "utfs.io"],
+  },
+  experimental: {
+    serverActions: true,
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
+

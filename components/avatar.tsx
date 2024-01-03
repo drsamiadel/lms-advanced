@@ -7,7 +7,7 @@ export default async function Avatar() {
     const user = session?.user;
     return (
         <Image
-            src={user?.image || '/images/default-avatar.png'}
+            src={user?.image || '/assets/Avatar.svg'}
             alt={user?.name || 'User Image'}
             width={40}
             height={40}

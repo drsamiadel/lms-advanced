@@ -63,7 +63,7 @@ export async function EnrollCourse({ courseId }: { courseId: string }) {
 
     if (!stripeCustomer) {
       const customer = await stripe.customers.create({
-        email: user.email,
+        email: user.email!,
       });
 
       stripeCustomer = await prisma.stripeCustomer.create({

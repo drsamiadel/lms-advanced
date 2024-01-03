@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Compass, List, BarChart } from "lucide-react";
+import { Layout, Compass, List, BarChart, Banknote } from "lucide-react";
 import SidebarRouteItem from "./sidebar-route-item";
 import { usePathname } from "next/navigation";
 
@@ -28,6 +28,11 @@ const teacherRoutes = [
     label: "Analytics",
     path: "/teacher/analytics",
   },
+  {
+    icon: Banknote,
+    label: "Payment",
+    path: "/payment",
+  }
 ];
 
 export default function SidebarRoutes() {

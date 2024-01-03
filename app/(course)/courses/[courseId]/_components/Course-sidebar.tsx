@@ -33,7 +33,7 @@ export default async function CourseSidebar({
     },
   });
   return (
-    <div className="h-full boreder-r flex flex-col overflow-y-auto shadow-sm">
+    <div className="h-full boreder-r flex flex-col overflow-y-auto shadow-sm w-full">
       <div className="px-7 py-8 flex flex-col border-b">
         <h1 className="font-semibold">{course.title}</h1>
         {purchase && (

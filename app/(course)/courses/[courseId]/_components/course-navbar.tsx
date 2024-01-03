@@ -3,6 +3,7 @@ import UserMenu from "@/app/(dashboard)/_components/user-menu";
 import { Chapter, Course, UserProgress } from "@prisma/client";
 import React from "react";
 import CourseMobileSidebar from "./course-mobile.sidebar";
+import { getUserRole } from "@/actions/get-user-role";
 
 interface CourseNavbarProps {
   course: Course & {
@@ -13,14 +14,15 @@ interface CourseNavbarProps {
   userProgress: number;
 }
 
-export default function CourseNavbar({
+export default async function CourseNavbar({
   course,
   userProgress,
 }: CourseNavbarProps) {
+  const { role } = await getUserRole();
   return (
     <div className="p-4 border-b h-full w-full flex items-center bg-white shadow-sm">
       <CourseMobileSidebar course={course} userProgress={userProgress} />
-      <NavbarRoutes />
+      <NavbarRoutes role={role!} />
       <UserMenu />
     </div>
   );

@@ -78,7 +78,7 @@ export default async function CoursePage({
       {!course.isPublished && (
         <Banner label="Your course is not published, It will not be visible to students" />
       )}
-      <div className="p-6">
+      <div className="p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-y-2">
             <h1 className="text-2xl font-medium">Course setup</h1>

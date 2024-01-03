@@ -1,23 +1,18 @@
 import { getDashboardCourses } from "@/actions/get-dashboard-courses";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import CoursesList from "@/components/courses-list";
-import { CheckCircle, Clock } from "lucide-react";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import InfoCard from "./_components/info-cart";
 import { IconBadge } from "@/components/icon-badge";
+import { Separator } from "@/components/ui/separator";
+import { userSession } from "@/hooks/userSession";
+import { CheckCircle, Clock, Heart } from "lucide-react";
+import InfoCard from "./_components/info-cart";
 
 export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
-  if (!session) return redirect("/");
-  const { user } = session;
+  const { id } = await userSession();
 
-  const { completedCourses, coursesInProgress } = await getDashboardCourses(
-    user.id
-  );
+  const { completedCourses, coursesInProgress } = await getDashboardCourses(id);
   return (
-    <div className="p-6 space-y-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="p-6 space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <InfoCard
           icon={Clock}
           label="In Progress"
@@ -29,8 +24,10 @@ export default async function Dashboard() {
           numberOfItems={completedCourses.length}
           variant="success"
         />
+        <InfoCard icon={Heart} label="Wishlist" numberOfItems={4} />
       </div>
-      <div className="flex flex-col gap-y-10">
+      <Separator />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5">
         <div className="flex flex-col gap-y-4">
           <div className="flex items-center gap-x-2">
             <IconBadge variant="default" icon={Clock} />

@@ -24,9 +24,6 @@ export default async function CoursesPage() {
   return (
     <div className="p-6">
       <DataTable columns={columns} data={courses} />
-      {/* <Link href="/teacher/create">
-        <Button>Create Course</Button>
-      </Link> */}
     </div>
   );
 }

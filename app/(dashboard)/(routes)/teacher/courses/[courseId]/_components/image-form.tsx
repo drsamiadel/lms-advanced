@@ -60,7 +60,7 @@ export default function ImageForm({ initialData, courseId }: ImageFormProps) {
       </div>
       {!isEditing ? (
         !initialData.imageUrl ? (
-          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+          <div className="flex items-center justify-center aspect-video bg-slate-200 rounded-md">
             <ImageIcon className="h-14 w-14 text-slate-400" />
           </div>
         ) : (

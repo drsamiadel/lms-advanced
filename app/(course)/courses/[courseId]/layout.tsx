@@ -45,7 +45,7 @@ export default async function CourseLayout({
   const userProgress = await getProgress(user.id, course.id);
   return (
     <div className="h-full">
-      <div className="h-[60px] md:pl-60 fixed inset-y-0 z-50 w-full">
+      <div className="h-[60px] md:pl-80 fixed inset-y-0 z-50 w-full">
         <CourseNavbar course={course} userProgress={userProgress} />
       </div>
       <div className="hidden md:flex h-full w-80 fixed inset-y-0 z-50">
@@ -54,7 +54,7 @@ export default async function CourseLayout({
             userProgress={userProgress}
             />
       </div>
-      <main className="md:pl-60 h-full pt-[60px]">{children}</main>
+      <main className="md:pl-80 h-full pt-[60px]">{children}</main>
     </div>
   );
 }

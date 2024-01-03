@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
@@ -38,17 +38,40 @@ model Session {
   @@map("sessions")
 }
 
+enum Role {
+  ADMIN
+  STUDENT
+  TEACHER
+}
+
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
+  password      String?
+  role          Role[]     @default([STUDENT])
   accounts      Account[]
   sessions      Session[]
   courses       Course[]
+  userInfo      UserInfo?
 
   @@map("users")
+}
+
+model UserInfo {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @db.ObjectId
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio       String?   @db.String
+  birthdate DateTime?
+  country   String?   @db.String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId])
+  @@map("userinfos")
 }
 
 model VerificationToken {
@@ -62,10 +85,10 @@ model VerificationToken {
 }
 
 model Course {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  
-  userId      String   @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   title       String   @db.String
   description String?  @db.String
@@ -73,9 +96,9 @@ model Course {
   price       Float?
   isPublished Boolean? @default(false)
 
-  chapters   Chapter[]
+  chapters Chapter[]
 
-  purchases  Purchase[]
+  purchases Purchase[]
 
   categoryId String?   @db.ObjectId
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -92,16 +115,16 @@ model Course {
 }
 
 model Chapter {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String @db.String
-  description String? @db.String
-  videoUrl String? @db.String
-  position Int
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   @db.String
+  description String?  @db.String
+  videoUrl    String?  @db.String
+  position    Int
   isPublished Boolean? @default(false)
-  isFree Boolean? @default(false)
+  isFree      Boolean? @default(false)
 
   courseId String @db.ObjectId
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   userProgress UserProgress[]
 
@@ -112,18 +135,18 @@ model Chapter {
 }
 
 model UserProgress {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId
-  chapterId String @db.ObjectId
-  chapter Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String  @db.ObjectId
+  chapterId String  @db.ObjectId
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
   isCompleted Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([chapterId])
   @@unique([userId, chapterId])
+  @@index([chapterId])
   @@map("userprogress")
 }
 
@@ -154,11 +177,11 @@ model Attachment {
 }
 
 model Purchase {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
 
   courseId String @db.ObjectId
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -170,8 +193,8 @@ model Purchase {
 }
 
 model StripeCustomer {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  userId String @db.ObjectId @unique
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  userId           String @unique @db.ObjectId
   stripeCustomerId String @unique @db.String
 
   createdAt DateTime @default(now())

@@ -62,7 +62,7 @@ export default function ChapterVideo({ initialData, courseId, chapterId }: Chapt
       </div>
       {!isEditing ? (
         !initialData.videoUrl ? (
-          <div className="flex items-center justify-center h-60 bg-slate-200 rounded-md">
+          <div className="flex items-center justify-center aspect-video bg-slate-200 rounded-md">
             <VideoIcon className="h-14 w-14 text-slate-400" />
           </div>
         ) : (

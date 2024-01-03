@@ -26,12 +26,14 @@ export default function CourseCard({
 }: CourseCardProps) {
   return (
     <Link href={`/courses/${id}`}>
-      <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
+      <div className="group hover:shadow-md transition overflow-hidden border rounded-lg p-3 h-full">
         <div className="relative w-full aspect-video rounded-md overflow-hidden">
           <Image
             src={imageUrl}
             alt={title}
             style={{ objectFit: "cover" }}
+            width={800}
+            height={500}
           />
         </div>
         <div className="flex flex-col pt-2">

@@ -34,7 +34,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <SearchInput />
       </div>
       <div className="p-6 space-y-4">
-        <Categories items={categories} />
+        <div>
+          <h1 className="text-lg font-[500] text-slate-600">Categories</h1>
+          <Categories items={categories} />
+        </div>
         <CoursesList items={courses} />
       </div>
     </>

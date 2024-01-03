@@ -86,7 +86,7 @@ export const columns: ColumnDef<Course>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <Link href={`/teacher/courses/${id}`} passHref>
+            <Link href={`/courses/${id}`} passHref>
               <DropdownMenuItem>
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />
                 View
@@ -98,7 +98,6 @@ export const columns: ColumnDef<Course>[] = [
                 Edits
               </DropdownMenuItem>
             </Link>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

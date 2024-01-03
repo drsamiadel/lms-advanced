@@ -15,7 +15,7 @@ export default function InfoCard({
   variant,
 }: InfoCardProps) {
   return (
-    <div className="border rounded-md flex items-center gap-x-2 p-3 bg-slate-200/20">
+    <div className="border rounded-md flex items-center gap-x-2 p-3 bg-slate-200/20 hover:bg-slate-300/20 cursor-pointer">
       <IconBadge variant={variant} icon={Icon} />
       <div>
         <p className="font-medium">{label}</p>

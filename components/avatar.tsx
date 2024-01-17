@@ -1,17 +1,16 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import Image from 'next/image';
+import { getServerSession } from "next-auth";
+import Image from "next/image";
+import { userSession } from "@/hooks/userSession";
 
 export default async function Avatar() {
-    const session = await getServerSession(authOptions);
-    const user = session?.user;
-    return (
-        <Image
-            src={user?.image || '/assets/Avatar.svg'}
-            alt={user?.name || 'User Image'}
-            width={40}
-            height={40}
-            className="rounded-full"
-        />
-    )
+  const { image, name} = await userSession();
+  return (
+    <Image
+      src={image || "/assets/Avatar.svg"}
+      alt={name || "User Image"}
+      width={40}
+      height={40}
+      className="rounded-full"
+    />
+  );
 }

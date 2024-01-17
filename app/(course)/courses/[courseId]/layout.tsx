@@ -1,10 +1,9 @@
 import { getProgress } from "@/actions/get-progress";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/db/prisma";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import CourseSidebar from "./_components/Course-sidebar";
 import CourseNavbar from "./_components/course-navbar";
+import { userSession } from "@/hooks/userSession";
 export default async function CourseLayout({
   children,
   params,
@@ -12,11 +11,7 @@ export default async function CourseLayout({
   children: React.ReactNode;
   params: { courseId: string };
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    redirect("/");
-  }
-  const { user } = session;
+  const { id } = await userSession();
 
   const course = await prisma.course.findUnique({
     where: { id: params.courseId },
@@ -24,13 +19,6 @@ export default async function CourseLayout({
       chapters: {
         where: {
           isPublished: true,
-        },
-        include: {
-          userProgress: {
-            where: {
-              userId: user.id,
-            },
-          },
         },
         orderBy: {
           position: "asc",
@@ -42,7 +30,7 @@ export default async function CourseLayout({
   if (!course) {
     return redirect("/");
   }
-  const userProgress = await getProgress(user.id, course.id);
+  const userProgress = await getProgress(id, course.id);
   return (
     <div className="h-full">
       <div className="h-[60px] md:pl-80 fixed inset-y-0 z-50 w-full">

@@ -1,7 +1,5 @@
 import { getChapter } from "@/actions/get-chapter";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import Banner from "@/components/banner";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import React from "react";
 import ChapterPlayer from "./_components/chapter-player";
@@ -10,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import Preview from "@/components/preview";
 import { File } from "lucide-react";
 import CourseProgressBtn from "./_components/course-progress-btn";
+import { userSession } from "@/hooks/userSession";
 
 interface ChapterPageProps {
   params: {
@@ -21,12 +20,11 @@ interface ChapterPageProps {
 export default async function ChapterPage({
   params: { courseId, chapterId },
 }: ChapterPageProps) {
-  const session = await getServerSession(authOptions);
-  if (!session) redirect("/");
+  const { id } = await userSession();
 
   const { chapter, course, attachments, userProgress, purchase, nextChapter } =
     await getChapter({
-      userId: session.user.id,
+      userId: id,
       courseId,
       chapterId,
     });

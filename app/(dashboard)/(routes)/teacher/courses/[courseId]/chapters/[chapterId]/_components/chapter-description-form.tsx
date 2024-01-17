@@ -20,6 +20,7 @@ import { updateChapter } from "../_actions";
 import Editor from "@/components/editor";
 import { Chapter } from "@prisma/client";
 import Preview from "@/components/preview";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ChapterDescriptionFormProps {
   initialData: Chapter;
@@ -84,11 +85,7 @@ export default function ChapterDescriptionForm({
             !initialData.description && "text-slate-500 italic"
           )}
         >
-          {initialData.description ? (
-            <Preview value={initialData.description} />
-          ) : (
-            "No description"
-          )}
+          {initialData.description || "No description"}
         </p>
       ) : (
         <Form {...form}>
@@ -102,7 +99,11 @@ export default function ChapterDescriptionForm({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Editor {...field} />
+                    <Textarea
+                      disabled={isSubmitting}
+                      placeholder="e.g. 'This chapter is about...'"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

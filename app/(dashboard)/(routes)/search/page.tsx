@@ -2,9 +2,8 @@ import { prisma } from "@/lib/db/prisma";
 import Categories from "./_components/categories";
 import SearchInput from "@/components/search-input";
 import { getCourses } from "@/actions/get-courses";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import CoursesList from "@/components/courses-list";
+import { userSession } from "@/hooks/userSession";
 
 interface SearchPageProps {
   searchParams: {
@@ -20,12 +19,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     },
   });
 
-  const session = await getServerSession(authOptions);
-  if (!session) return { props: {} };
-  const { user } = session;
+  const { id } = await userSession();
 
   const courses = await getCourses({
-    userId: user.id,
+    userId: id,
     ...searchParams,
   });
   return (

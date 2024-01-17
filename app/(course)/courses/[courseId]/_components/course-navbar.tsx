@@ -7,9 +7,7 @@ import { getUserRole } from "@/actions/get-user-role";
 
 interface CourseNavbarProps {
   course: Course & {
-    chapters: (Chapter & {
-      userProgress: UserProgress[] | null;
-    })[];
+    chapters: Chapter[];
   };
   userProgress: number;
 }

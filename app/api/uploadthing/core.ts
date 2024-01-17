@@ -1,15 +1,11 @@
-import { getServerSession } from "next-auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { userSession } from "@/hooks/userSession";
 
 const f = createUploadthing();
 
 const handleAuth = async () => {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Unauthorized");
-  }
-  return session.user.id as unknown as Record<string, unknown>;
+  const { id } = await userSession();
+  return id as unknown as Record<string, unknown>;
 };
 
 export const ourFileRouter = {
@@ -21,10 +17,9 @@ export const ourFileRouter = {
     .middleware(async () => await handleAuth())
     .onUploadComplete(() => {}),
 
-    chapterVideo: f({ video: { maxFileSize: "512MB", maxFileCount: 1 } })
+  lessonVideo: f({ video: { maxFileSize: "512MB", maxFileCount: 1 } })
     .middleware(async () => await handleAuth())
     .onUploadComplete(() => {}),
-    
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

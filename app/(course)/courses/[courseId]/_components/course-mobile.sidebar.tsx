@@ -7,9 +7,7 @@ import CourseSidebar from "./Course-sidebar";
 
 type CourseMobileSidebarProps = {
   course: Course & {
-    chapters: (Chapter & {
-      userProgress: UserProgress[] | null;
-    })[];
+    chapters: Chapter[];
   };
   userProgress: number;
 };

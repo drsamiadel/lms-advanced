@@ -1,17 +1,13 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { prisma } from "@/lib/db/prisma";
 import { Chapter, Course, UserProgress } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import React from "react";
 import CourseSidebarItem from "./course-sidebar-item";
 import CourseProgress from "@/components/course-progress";
+import { userSession } from "@/hooks/userSession";
 
 interface CourseSidebarProps {
   course: Course & {
-    chapters: (Chapter & {
-      userProgress: UserProgress[] | null;
-    })[];
+    chapters: Chapter[];
   };
   userProgress: number;
 }
@@ -20,15 +16,13 @@ export default async function CourseSidebar({
   course,
   userProgress,
 }: CourseSidebarProps) {
-  const session = await getServerSession(authOptions);
-  if (!session) redirect("/");
-  const { user } = session;
+  const { id } = await userSession();
 
   const purchase = await prisma.purchase.findUnique({
     where: {
       userId_courseId: {
         courseId: course.id,
-        userId: user.id,
+        userId: id,
       },
     },
   });

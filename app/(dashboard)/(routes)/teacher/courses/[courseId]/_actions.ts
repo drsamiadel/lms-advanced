@@ -2,23 +2,20 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { Course } from "@prisma/client";
+import { userSession } from "@/hooks/userSession";
 
 export async function updateCourse({
   courseId,
   values,
 }: {
   courseId: string;
-  values: Course  | Partial<Course>
+  values: Course | Partial<Course>;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
+  await userSession();
   const course = await prisma.course.update({
     where: {
-        id: courseId,
+      id: courseId,
     },
     data: {
       ...values,
@@ -29,36 +26,29 @@ export async function updateCourse({
 }
 
 export async function addAttachment({
-  courseId,
+  lessonId,
   values: { url },
 }: {
-  courseId: string;
-  values: { url: string }
+  lessonId: string;
+  values: { url: string };
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
-  const course = await prisma.course.findUnique({
+  await userSession();
+  const lesson = await prisma.lesson.findUnique({
     where: {
-      id: courseId,
+      id: lessonId,
     },
-  }); 
+  });
 
-  if (!course) {
-    throw new Error("Course not found");
-  }
-
-  if(course.userId !== session.user.id) {
-    throw new Error("Not authorized");
+  if (!lesson) {
+    throw new Error("Lesson not found");
   }
 
   const attachment = await prisma.attachment.create({
-    data :{
+    data: {
       url,
       name: url.split("/").pop() || "",
-      courseId,
-    }
+      lessonId,
+    },
   });
 
   return attachment;
@@ -69,15 +59,12 @@ export async function deleteAttachment({
 }: {
   attachmentId: string;
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
+  const { id } = await userSession();
   const attachment = await prisma.attachment.findUnique({
     where: {
       id: attachmentId,
     },
-  }); 
+  });
 
   if (!attachment) {
     throw new Error("Attachment not found");
@@ -85,15 +72,15 @@ export async function deleteAttachment({
 
   const course = await prisma.course.findUnique({
     where: {
-      id: attachment.courseId,
+      id: attachment.lessonId,
     },
-  }); 
+  });
 
   if (!course) {
     throw new Error("Course not found");
   }
 
-  if(course.userId !== session.user.id) {
+  if (course.userId !== id) {
     throw new Error("Not authorized");
   }
 
@@ -111,23 +98,20 @@ export async function createChapter({
   values,
 }: {
   courseId: string;
-  values: { title: string }
+  values: { title: string };
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
+  const { id } = await userSession();
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
-  }); 
+  });
 
   if (!course) {
     throw new Error("Course not found");
   }
 
-  if(course.userId !== session.user.id) {
+  if (course.userId !== id) {
     throw new Error("Not authorized");
   }
 
@@ -158,23 +142,20 @@ export async function reorderChapters({
   updateData: values,
 }: {
   courseId: string;
-  updateData: { id: string; position: number }[]
+  updateData: { id: string; position: number }[];
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
+  const { id } = await userSession();
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
-  }); 
+  });
 
   if (!course) {
     throw new Error("Course not found");
   }
 
-  if(course.userId !== session.user.id) {
+  if (course.userId !== id) {
     throw new Error("Not authorized");
   }
 
@@ -192,26 +173,19 @@ export async function reorderChapters({
   return true;
 }
 
-export async function deleteCourse({
-  courseId,
-}: {
-  courseId: string;
-}) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
+export async function deleteCourse({ courseId }: { courseId: string }) {
+  const { id } = await userSession();
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
-  }); 
+  });
 
   if (!course) {
     throw new Error("Course not found");
   }
 
-  if(course.userId !== session.user.id) {
+  if (course.userId !== id) {
     throw new Error("Not authorized");
   }
 
@@ -224,26 +198,19 @@ export async function deleteCourse({
   return course;
 }
 
-export async function toggleCoursePublish({
-  courseId,
-}: {
-  courseId: string;
-}) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    throw new Error("Not authenticated");
-  }
+export async function toggleCoursePublish({ courseId }: { courseId: string }) {
+  const { id } = await userSession();
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
-  }); 
+  });
 
   if (!course) {
     throw new Error("Course not found");
   }
 
-  if(course.userId !== session.user.id) {
+  if (course.userId !== id) {
     throw new Error("Not authorized");
   }
 

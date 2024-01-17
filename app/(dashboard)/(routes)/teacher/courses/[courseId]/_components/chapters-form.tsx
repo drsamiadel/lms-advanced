@@ -54,6 +54,7 @@ export default function ChaptersForm({ initialData, courseId }: ChaptersFormProp
         toast.success("Course updated successfully");
         toggleCreating();
         router.refresh();
+        form.reset();
     } catch {
         toast.error("Something went wrong");
     }

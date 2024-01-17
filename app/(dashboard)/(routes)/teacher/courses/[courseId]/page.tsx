@@ -1,4 +1,3 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { IconBadge } from "@/components/icon-badge";
 import { prisma } from "@/lib/db/prisma";
 import {
@@ -7,38 +6,29 @@ import {
   LayoutDashboard,
   ListChecks,
 } from "lucide-react";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import TitleForm from "./_components/title-form";
 import DescriptionForm from "./_components/description-form";
 import ImageForm from "./_components/image-form";
 import CategoryForm from "./_components/category-form";
 import PriceForm from "./_components/price-form";
-import AttachmentForm from "./_components/attachment-form";
 import ChaptersForm from "./_components/chapters-form";
 import Banner from "@/components/banner";
 import CourseActions from "./_components/course-actions";
+import { userSession } from "@/hooks/userSession";
 
 export default async function CoursePage({
   params: { courseId },
 }: {
   params: { courseId: string };
 }) {
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return redirect("/");
-  }
+  await userSession();
 
   const course = await prisma.course.findUnique({
     where: {
       id: courseId,
     },
     include: {
-      attachments: {
-        orderBy: {
-          createdAt: "desc",
-        },
-      },
       chapters: {
         orderBy: {
           position: "asc",
@@ -124,13 +114,6 @@ export default async function CoursePage({
                 <h2 className="text-xl">Sell your course</h2>
               </div>
               <PriceForm initialData={course} courseId={course.id} />
-            </div>
-            <div>
-              <div className="flex items-center gap-x-2">
-                <IconBadge icon={File} />
-                <h2 className="text-xl">Resourses & Attachments</h2>
-              </div>
-              <AttachmentForm initialData={course} courseId={course.id} />
             </div>
           </div>
         </div>

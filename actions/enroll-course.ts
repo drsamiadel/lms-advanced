@@ -1,18 +1,13 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { userSession } from "@/hooks/userSession";
 import { prisma } from "@/lib/db/prisma";
 import { stripe } from "@/lib/stripe";
-import { getServerSession } from "next-auth";
 import Stripe from "stripe";
 
 export async function EnrollCourse({ courseId }: { courseId: string }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      throw new Error("Unauthorized");
-    }
-    const { user } = session;
+    const { id, email } = await userSession();
 
     const course = await prisma.course.findFirst({
       where: {
@@ -28,7 +23,7 @@ export async function EnrollCourse({ courseId }: { courseId: string }) {
     const purchase = await prisma.purchase.findUnique({
       where: {
         userId_courseId: {
-          userId: user.id,
+          userId: id,
           courseId: courseId,
         },
       },
@@ -54,7 +49,7 @@ export async function EnrollCourse({ courseId }: { courseId: string }) {
 
     let stripeCustomer = await prisma.stripeCustomer.findUnique({
       where: {
-        userId: user.id,
+        userId: id,
       },
       select: {
         stripeCustomerId: true,
@@ -63,12 +58,12 @@ export async function EnrollCourse({ courseId }: { courseId: string }) {
 
     if (!stripeCustomer) {
       const customer = await stripe.customers.create({
-        email: user.email!,
+        email: email!,
       });
 
       stripeCustomer = await prisma.stripeCustomer.create({
         data: {
-          userId: user.id,
+          userId: id,
           stripeCustomerId: customer.id,
         },
       });
@@ -82,7 +77,7 @@ export async function EnrollCourse({ courseId }: { courseId: string }) {
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/courses/${course.id}?canceled=1`,
       metadata: {
         courseId: course.id,
-        userId: user.id,
+        userId: id,
       },
     });
     return {
@@ -91,6 +86,6 @@ export async function EnrollCourse({ courseId }: { courseId: string }) {
   } catch (error: any) {
     return {
       error: error.message,
-    }
+    };
   }
 }

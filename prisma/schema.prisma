@@ -8,6 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User Models and related sessions, accounts, etc.
+
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   userId            String  @db.ObjectId
@@ -42,20 +44,23 @@ enum Role {
   ADMIN
   STUDENT
   TEACHER
+  SUPPORT
 }
 
 model User {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?    @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  role          Role[]     @default([STUDENT])
-  accounts      Account[]
-  sessions      Session[]
-  courses       Course[]
-  userInfo      UserInfo?
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  name              String?
+  email             String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  password          String?
+  role              Role[]             @default([STUDENT])
+  accounts          Account[]
+  sessions          Session[]
+  courses           Course[]
+  userInfo          UserInfo?
+  wishlist          Wishlist[]
+  MentorshipRequest MentorshipRequest?
 
   @@map("users")
 }
@@ -84,6 +89,8 @@ model VerificationToken {
   @@map("verificationtokens")
 }
 
+// Course Models and related chapters, attachments, etc.
+
 model Course {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
@@ -100,10 +107,10 @@ model Course {
 
   purchases Purchase[]
 
+  wishlistCourse WishlistCourse[]
+
   categoryId String?   @db.ObjectId
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-
-  attachments Attachment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -118,7 +125,6 @@ model Chapter {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String   @db.String
   description String?  @db.String
-  videoUrl    String?  @db.String
   position    Int
   isPublished Boolean? @default(false)
   isFree      Boolean? @default(false)
@@ -126,7 +132,7 @@ model Chapter {
   courseId String @db.ObjectId
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  userProgress UserProgress[]
+  lessons Lesson[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -134,19 +140,87 @@ model Chapter {
   @@index([courseId])
 }
 
-model UserProgress {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String  @db.ObjectId
+model Lesson {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   @db.String
+  description String?  @db.String
+  videoUrl    String?  @db.String
+  position    Int
+  isPublished Boolean? @default(false)
+
+  quizzes     Quiz?
+  attachments Attachment[]
+
+  userProgress UserProgress[]
+
   chapterId String  @db.ObjectId
   chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([chapterId])
+}
+
+model Quiz {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  questions Question[]
+
+  lessonId String @unique @db.ObjectId
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  question    String  @db.String
+  options     String    @db.String
+  answer      String  @db.String
+  explanation String? @db.String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userAnswers UserAnswer[]
+
+  quizId String @db.ObjectId
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model UserAnswer {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  questionId String   @db.ObjectId
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  answer    String  @db.String
+  isCorrect Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, questionId])
+  @@map("useranswers")
+}
+
+model UserProgress {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String @db.ObjectId
+  lessonId String @db.ObjectId
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   isCompleted Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId, chapterId])
-  @@index([chapterId])
+  @@unique([userId, lessonId])
+  @@index([lessonId])
   @@map("userprogress")
 }
 
@@ -166,13 +240,13 @@ model Attachment {
   name String @db.String
   url  String @db.String
 
-  courseId String @db.ObjectId
-  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessonId String @db.ObjectId
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([courseId])
+  @@index([lessonId])
   @@map("attachments")
 }
 
@@ -192,6 +266,8 @@ model Purchase {
   @@map("purchases")
 }
 
+// Stripe Models
+
 model StripeCustomer {
   id               String @id @default(auto()) @map("_id") @db.ObjectId
   userId           String @unique @db.ObjectId
@@ -201,4 +277,106 @@ model StripeCustomer {
   updatedAt DateTime @updatedAt
 
   @@map("stripecustomers")
+}
+
+// Rating Models
+
+model Rating {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  courseId String @db.ObjectId
+
+  ratingCourse RatingCourse[]
+
+  @@unique([courseId])
+  @@map("ratings")
+}
+
+model RatingCourse {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  ratingId  String   @db.ObjectId
+  userId    String   @db.ObjectId
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Rating    Rating   @relation(fields: [ratingId], references: [id])
+
+  @@unique([ratingId, userId])
+  @@map("ratingcourses")
+}
+
+// Wishlist Models
+
+model Wishlist {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+
+  courses WishlistCourse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+  @@map("wishlists")
+}
+
+model WishlistCourse {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  courseId   String @db.ObjectId
+  wishlistId String @db.ObjectId
+
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  wishlist Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([courseId, wishlistId])
+  @@map("wishlistcourses")
+}
+
+// Notification Models
+
+// Support Models
+
+model Ticket {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  title         String        @db.String
+  message       String        @db.String
+  Ticketreplies TicketReply[]
+  status        String        @default("open") @db.String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("tickets")
+}
+
+model TicketReply {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  ticketId  String   @db.ObjectId
+  Ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  userId    String   @db.ObjectId
+  message   String   @db.String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ticketreplies")
+}
+
+// Mentorship Models
+
+model MentorshipRequest {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @unique @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminId   String?  @db.ObjectId
+  message   String?  @db.String
+  status    String   @default("pending") @db.String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, adminId])
+  @@map("mentorshiprequests")
 }

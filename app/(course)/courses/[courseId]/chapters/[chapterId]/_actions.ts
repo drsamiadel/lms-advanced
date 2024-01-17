@@ -1,9 +1,7 @@
 "use server";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { userSession } from "@/hooks/userSession";
 import { prisma } from "@/lib/db/prisma";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 
 export async function updateChapterProgress({
   chapterId,
@@ -15,15 +13,13 @@ export async function updateChapterProgress({
   isCompleted: boolean;
 }) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) redirect("/");
-    const { user } = session;
+    const { id } = await userSession();
 
     const userProgress = await prisma.userProgress.upsert({
       where: {
         userId_chapterId: {
           chapterId,
-          userId: user.id,
+          userId: id,
         },
       },
       update: {
@@ -31,7 +27,7 @@ export async function updateChapterProgress({
       },
       create: {
         isCompleted,
-        userId: user.id,
+        userId: id,
         chapterId,
       },
     });

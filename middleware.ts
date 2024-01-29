@@ -1,16 +1,16 @@
 import { withAuth } from "next-auth/middleware";
+import { userSession } from "./hooks/userSession";
 
 export default withAuth({
   callbacks: {
-    authorized: ({ req }) => {
-      const sessionToken = req.cookies.get("next-auth.session-token");
-      if (sessionToken) return true;
-      else return false;
+    authorized: async ({ req }) => {
+      const { id } = await userSession();
+      return !!id;
     },
   },
   pages: {
     signIn: "/signin",
-  }
+  },
 });
 
 export const config = {

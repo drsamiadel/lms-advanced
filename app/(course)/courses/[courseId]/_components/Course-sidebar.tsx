@@ -14,7 +14,6 @@ interface CourseSidebarProps {
         userProgress: UserProgress[];
       })[];
     })[];
-    rating: RatingCourse[];
   };
   userProgress: number;
 }

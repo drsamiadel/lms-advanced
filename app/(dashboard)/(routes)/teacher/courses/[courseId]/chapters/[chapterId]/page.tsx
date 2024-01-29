@@ -55,7 +55,7 @@ export default async function ChapterPage({
           variant="warning"
         />
       )}
-      <div className="p-6">
+      <div className="p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="w-full">
             <Link

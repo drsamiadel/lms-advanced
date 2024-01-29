@@ -109,6 +109,8 @@ model Course {
 
   wishlistCourse WishlistCourse[]
 
+  rating        RatingCourse[]
+
   categoryId String?   @db.ObjectId
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
@@ -177,7 +179,7 @@ model Quiz {
 model Question {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
   question    String  @db.String
-  options     String    @db.String
+  options     String  @db.String
   answer      String  @db.String
   explanation String? @db.String
 
@@ -198,8 +200,7 @@ model UserAnswer {
   questionId String   @db.ObjectId
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  answer    String  @db.String
-  isCorrect Boolean
+  answer String @db.String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -281,27 +282,17 @@ model StripeCustomer {
 
 // Rating Models
 
-model Rating {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  courseId String @db.ObjectId
-
-  ratingCourse RatingCourse[]
-
-  @@unique([courseId])
-  @@map("ratings")
-}
-
 model RatingCourse {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  ratingId  String   @db.ObjectId
   userId    String   @db.ObjectId
   rating    Int
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Rating    Rating   @relation(fields: [ratingId], references: [id])
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?  @db.ObjectId
 
-  @@unique([ratingId, userId])
+  @@unique([userId])
   @@map("ratingcourses")
 }
 

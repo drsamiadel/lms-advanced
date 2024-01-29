@@ -1,6 +1,6 @@
 "use client";
 
-import { Layout, Compass, List, BarChart, Banknote } from "lucide-react";
+import { Layout, Compass, List, BarChart, Banknote, Heart } from "lucide-react";
 import SidebarRouteItem from "./sidebar-route-item";
 import { usePathname } from "next/navigation";
 
@@ -15,6 +15,11 @@ const studentRoutes = [
     label: "Browse",
     path: "/search",
   },
+  {
+    icon: Heart,
+    label: "Wishlist",
+    path: "/wishlist",
+  }
 ];
 
 const teacherRoutes = [

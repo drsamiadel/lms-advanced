@@ -2,33 +2,36 @@ import { prisma } from "@/lib/db/prisma";
 
 export const getProgress = async (
   userId: string,
-  courseId: string,
+  courseId: string
 ): Promise<number> => {
   try {
-    const publishedChapters = await prisma.chapter.findMany({
+    const publishedLessons = await prisma.lesson.findMany({
       where: {
-        courseId: courseId,
+        chapter: {
+          courseId: courseId,
+          isPublished: true,
+        },
         isPublished: true,
       },
       select: {
         id: true,
-      }
+      },
     });
 
-    const publishedChaptersIds = publishedChapters.map((chapter) => chapter.id);
+    const publishedLessonsIds = publishedLessons.map((lesson) => lesson.id);
 
-    const validCompletedChapters = await prisma.userProgress.count({
+    const validCompletedLessons = await prisma.userProgress.count({
       where: {
         userId: userId,
-        chapterId: {
-          in: publishedChaptersIds,
+        lessonId: {
+          in: publishedLessonsIds,
         },
         isCompleted: true,
       },
     });
 
-    const progressPercentage = 
-    (validCompletedChapters / publishedChaptersIds.length) * 100;
+    const progressPercentage =
+      (validCompletedLessons / publishedLessonsIds.length) * 100;
 
     return progressPercentage;
   } catch (error) {

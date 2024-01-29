@@ -16,6 +16,7 @@ import { Pencil } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { updataLesson } from "../_actions";
 
 interface LessonTitleFormProps {
   initialData: {
@@ -36,7 +37,6 @@ export default function LessonTitleForm({
   chapterId,
   lessonId,
 }: LessonTitleFormProps) {
-    
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const toggleEditing = () => setIsEditing((prev) => !prev);
@@ -50,6 +50,7 @@ export default function LessonTitleForm({
 
   const onSubmit = async (values: zod.infer<typeof formSchema>) => {
     try {
+      await updataLesson({ lessonId, values });
       toast.success("Lesson updated successfully");
       toggleEditing();
       router.refresh();

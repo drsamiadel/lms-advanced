@@ -2,7 +2,6 @@ import { IconBadge } from "@/components/icon-badge";
 import { prisma } from "@/lib/db/prisma";
 import {
   ArrowLeft,
-  Eye,
   File,
   LayoutDashboard,
   MessageCircleQuestion,
@@ -60,7 +59,7 @@ export default async function ChapterPage({
           variant="warning"
         />
       )}
-      <div className="p-6">
+      <div className="p-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="w-full">
             <Link
@@ -104,6 +103,7 @@ export default async function ChapterPage({
                 initialData={lesson}
                 courseId={params.courseId}
                 chapterId={params.chapterId}
+                lessonId={params.lessonId}
               />
               <div className="flex items-center gap-x-2 mt-6">
                 <IconBadge icon={Video} />

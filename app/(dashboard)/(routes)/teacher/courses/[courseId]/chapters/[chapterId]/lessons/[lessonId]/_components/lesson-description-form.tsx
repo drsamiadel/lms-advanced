@@ -19,11 +19,13 @@ import { cn } from "@/lib/utils";
 import Editor from "@/components/editor";
 import { Lesson } from "@prisma/client";
 import Preview from "@/components/preview";
+import { updataLesson } from "../_actions";
 
 interface LessonDescriptionFromProps {
   initialData: Lesson;
   courseId: string;
   chapterId: string;
+  lessonId: string;
 }
 
 const formSchema = zod.object({
@@ -34,6 +36,7 @@ export default function LessonDescriptionFrom({
   initialData,
   courseId,
   chapterId,
+  lessonId,
 }: LessonDescriptionFromProps) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -52,6 +55,7 @@ export default function LessonDescriptionFrom({
 
   const onSubmit = async (values: zod.infer<typeof formSchema>) => {
     try {
+      await updataLesson({ lessonId, values });
       toast.success("Lesson updated successfully");
       toggleEditing();
       router.refresh();

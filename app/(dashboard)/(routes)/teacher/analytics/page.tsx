@@ -8,7 +8,7 @@ import { userSession } from "@/hooks/userSession";
 export default async function AnalyticsPage() {
   const { id } = await userSession();
 
-  const { data, totalRevenue, totalSales } = await getAnalytics(id);
+  const { data, totalRevenue, totalSales, totalStudents } = await getAnalytics(id);
 
   return (
     <div className="p-6 space-y-6 md:space-y-10">
@@ -20,7 +20,7 @@ export default async function AnalyticsPage() {
           icon={DollarSign}
         />
         <DataCard label="Total Sales" value={totalSales} icon={BarChart2Icon} />
-        <DataCard label="Students" value={30} icon={Users} />
+        <DataCard label="Students" value={totalStudents} icon={Users} />
       </div>
       <Separator />
       <h2 className="text-2xl font-bold text-slate-700">Overview</h2>

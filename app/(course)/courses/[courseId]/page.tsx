@@ -18,11 +18,22 @@ export default async function CoursePage({
         orderBy: {
           position: "asc",
         },
+        include: {
+          lessons: {
+            where: { isPublished: true },
+            orderBy: {
+              position: "asc",
+            },
+          },
+        },
       },
+      rating: true,
     },
   });
 
   if (!course) return redirect("/");
 
-  return redirect(`/courses/${course.id}/chapters/${course.chapters[0].id}`);
+  return redirect(
+    `/courses/${course.id}/chapters/${course.chapters[0].id}/lessons/${course.chapters[0].lessons[0].id}`
+  );
 }

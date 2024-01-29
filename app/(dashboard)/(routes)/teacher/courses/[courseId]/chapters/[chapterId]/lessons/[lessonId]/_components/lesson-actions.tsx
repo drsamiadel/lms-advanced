@@ -6,6 +6,7 @@ import { Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { deleteLesson, togglePublishLesson } from "../_actions";
 
 type LessonActionsProps = {
   disabled: boolean;
@@ -22,34 +23,39 @@ export default function LessonActions({
   isPublished,
   lessonId,
 }: LessonActionsProps) {
-    const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
+  const onDelete = async () => {
+    try {
+      setIsLoading(true);
+      await deleteLesson({ lessonId });
+      toast.success("Lesson deleted successfully.");
+      router.refresh();
+      router.push(`/teacher/courses/${courseId}/chapters/${chapterId}`);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const onDelete = async () => {
-        try {
-            setIsLoading(true);
-            toast.success("Lesson deleted successfully.");
-            router.refresh();
-            router.push(`/teacher/courses/${courseId}/chapters/${chapterId}`);
-        } catch {
-            toast.error("Something went wrong. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const onPublish = async () => {
-        try {
-            setIsLoading(true);
-            toast.success("Lesson published successfully.");
-            router.refresh();
-        } catch {
-            toast.error("Something went wrong. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+  const onPublish = async () => {
+    try {
+      setIsLoading(true);
+      await togglePublishLesson({
+        chapterId,
+        courseId,
+        lessonId,
+      });
+      toast.success("Lesson published successfully.");
+      router.refresh();
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <div className="flex flex-center gap-x-2">
       <Button

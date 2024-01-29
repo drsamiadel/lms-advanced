@@ -5,14 +5,18 @@ import { useForm } from "react-hook-form";
 
 import {
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Check, Dot, MessageCircleQuestionIcon, Pencil, Plus, Trash, XIcon } from "lucide-react";
+import {
+  Check,
+  Dot,
+  MessageCircleQuestionIcon,
+  Pencil,
+  Plus,
+  Trash,
+  XIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -24,6 +28,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { handleQuiz } from "../_actions";
 
 interface LessonQuizProps {
   initialData: Lesson & {
@@ -75,7 +80,10 @@ export default function LessonQuiz({
 
   const onSubmit = async () => {
     try {
-      console.log(questions);
+      await handleQuiz({
+        lessonId,
+        values: questions,
+      });
       toast.success("Lesson updated successfully");
       toggleEditing();
       router.refresh();
@@ -85,6 +93,9 @@ export default function LessonQuiz({
   };
 
   const [questions, setQuestions] = useState<Question[]>([]);
+  useEffect(() => {
+    setQuestions(quizzes?.questions ?? []);
+  }, [quizzes]);
   let newQuestion = {
     id: Math.random().toString(36).substring(7),
     question: "",

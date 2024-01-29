@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IconBadge } from "./icon-badge";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Heart } from "lucide-react";
 import { formatPrice } from "@/lib/format";
 import CourseProgress from "./course-progress";
+import WishlistBtn from "./wishlist-btn";
+import { Star, StarHalf } from "lucide-react";
+import RatingPreview from "./rating-preview";
 
 type CourseCardProps = {
   id: string;
@@ -13,6 +16,12 @@ type CourseCardProps = {
   price: number;
   progress: number | null;
   category: string | null;
+  wishlisted: boolean;
+  userId: string;
+  rating: {
+    rate: number;
+    numberOfRatings: number;
+  };
 };
 
 export default function CourseCard({
@@ -23,10 +32,13 @@ export default function CourseCard({
   price,
   progress,
   category,
+  wishlisted,
+  userId,
+  rating,
 }: CourseCardProps) {
   return (
-    <Link href={`/courses/${id}`}>
-      <div className="group hover:shadow-md transition overflow-hidden border rounded-lg p-3 h-full">
+    <div className="group hover:shadow-md transition overflow-hidden border rounded-lg p-3 h-full flex flex-col">
+      <Link href={`/courses/${id}`}>
         <div className="relative w-full aspect-video rounded-md overflow-hidden">
           <Image
             src={imageUrl}
@@ -59,7 +71,11 @@ export default function CourseCard({
             </p>
           )}
         </div>
+      </Link>
+      <div className="flex justify-between items-center mt-auto">
+        <RatingPreview rating={rating} />
+        <WishlistBtn wishlisted={wishlisted} courseId={id} userId={userId} />
       </div>
-    </Link>
+    </div>
   );
 }

@@ -1,13 +1,17 @@
 import NavbarRoutes from "@/app/(dashboard)/_components/navbar-routes";
 import UserMenu from "@/app/(dashboard)/_components/user-menu";
-import { Chapter, Course, UserProgress } from "@prisma/client";
+import { Chapter, Course, Lesson, UserProgress } from "@prisma/client";
 import React from "react";
 import CourseMobileSidebar from "./course-mobile.sidebar";
 import { getUserRole } from "@/actions/get-user-role";
 
 interface CourseNavbarProps {
   course: Course & {
-    chapters: Chapter[];
+    chapters: (Chapter & {
+      lessons: (Lesson & {
+        userProgress: UserProgress[];
+      })[];
+    })[];
   };
   userProgress: number;
 }

@@ -9,7 +9,7 @@ import InfoCard from "./_components/info-cart";
 export default async function Dashboard() {
   const { id } = await userSession();
 
-  const { completedCourses, coursesInProgress } = await getDashboardCourses(id);
+  const { completedCourses, coursesInProgress, coursesInWishlist } = await getDashboardCourses(id);
   return (
     <div className="p-6 space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -24,10 +24,10 @@ export default async function Dashboard() {
           numberOfItems={completedCourses.length}
           variant="success"
         />
-        <InfoCard icon={Heart} label="Wishlist" numberOfItems={4} />
+        <InfoCard icon={Heart} label="Wishlist" numberOfItems={coursesInWishlist.length} />
       </div>
       <Separator />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5">
+      <div className="grid grid-cols-1 gap-y-5">
         <div className="flex flex-col gap-y-4">
           <div className="flex items-center gap-x-2">
             <IconBadge variant="default" icon={Clock} />

@@ -6,15 +6,14 @@
 import * as zod from "zod";
 
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Pencil, PlusCircle, VideoIcon } from "lucide-react";
+import { Pencil, PlusCircle, VideoIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Lesson } from "@prisma/client";
 import { FileUpload } from "@/components/file-upload";
-import { updateChapter } from "../../../_actions";
 import Player from "@/components/player";
+import { updataLesson } from "../_actions";
 
 interface LessonVideoProps {
   initialData: Lesson;
@@ -36,6 +35,7 @@ export default function LessonVideo({ initialData, courseId, chapterId, lessonId
 
   const onSubmit = async (values: zod.infer<typeof formSchema>) => {
     try {
+      await updataLesson({ lessonId, values });
       toast.success("Lesson updated successfully");
       toggleEditing();
       router.refresh();

@@ -41,11 +41,18 @@ export const getAnalytics = async (userId: string) => {
     );
     const totalRevenue = data.reduce((acc, curr) => acc + curr.total, 0);
     const totalSales = purchases.length;
+    const totalStudents = purchases.reduce((acc, curr) => {
+      if (!acc.includes(curr.userId)) {
+        acc.push(curr.userId);
+      }
+      return acc;
+    }, [] as string[]).length;
 
     return {
         data,
         totalRevenue,
         totalSales,
+        totalStudents,
     }
   } catch (error) {
     console.log(error);
@@ -53,6 +60,7 @@ export const getAnalytics = async (userId: string) => {
       data: [],
       totalRevenue: 0,
       totalSales: 0,
+      totalStudents: 0,
     };
   }
 };

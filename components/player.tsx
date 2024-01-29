@@ -57,7 +57,7 @@ export default function Player({ src, autoPlay, onEnd }: PlayerProps) {
     return null;
   }
   return (
-    <div className="relative video-player aspect-video">
+    <div className="relative video-player aspect-video rounded-xl overflow-hidden">
       {!ready && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-800">
           <Loader2 className="w-10 h-10 text-secondary animate-spin" />

@@ -23,6 +23,23 @@ export default async function CourseLayout({
         orderBy: {
           position: "asc",
         },
+        include: {
+          lessons: {
+            where: {
+              isPublished: true,
+            },
+            orderBy: {
+              position: "asc",
+            },
+            include: {
+              userProgress: {
+                where: {
+                  userId: id,
+                },
+              },
+            }
+          },
+        },
       },
     },
   });
@@ -37,10 +54,7 @@ export default async function CourseLayout({
         <CourseNavbar course={course} userProgress={userProgress} />
       </div>
       <div className="hidden md:flex h-full w-80 fixed inset-y-0 z-50">
-        <CourseSidebar
-            course={course}
-            userProgress={userProgress}
-            />
+        <CourseSidebar course={course} userProgress={userProgress} />
       </div>
       <main className="md:pl-80 h-full pt-[60px]">{children}</main>
     </div>

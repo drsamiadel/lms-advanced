@@ -1,11 +1,9 @@
 import { withAuth } from "next-auth/middleware";
-import { userSession } from "./hooks/userSession";
 
 export default withAuth({
   callbacks: {
-    authorized: async ({ req }) => {
-      const { id } = await userSession();
-      return !!id;
+    authorized: async ({ token }) => {
+      return !!token;
     },
   },
   pages: {
